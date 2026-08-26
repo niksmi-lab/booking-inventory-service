@@ -30,7 +30,7 @@ flowchart LR
     Service --> Repo[PostgreSQL repository]
     Worker[Expiration worker] --> Repo
     Repo --> DB[(PostgreSQL)]
-    Prometheus[Prometheus] --> Metrics[/metrics]
+    Prometheus[Prometheus] --> Metrics["/metrics"]
     Metrics --> HTTP
 ```
 
