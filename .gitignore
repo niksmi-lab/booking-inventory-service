@@ -1,0 +1,12 @@
+.env
+*.env
+!.env.example
+
+/bin/
+/main
+*.log
+coverage.out
+docs/production-hardening.diff
+.DS_Store
+.idea/
+.vscode/
