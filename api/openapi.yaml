@@ -85,8 +85,12 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "408":
+          $ref: "#/components/responses/RequestTimeout"
         "500":
           $ref: "#/components/responses/InternalError"
+        "504":
+          $ref: "#/components/responses/DependencyTimeout"
 
   /api/v1/stock/reserve:
     post:
@@ -109,6 +113,8 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "408":
+          $ref: "#/components/responses/RequestTimeout"
         "409":
           $ref: "#/components/responses/Conflict"
         "500":
@@ -138,10 +144,14 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "408":
+          $ref: "#/components/responses/RequestTimeout"
         "409":
           $ref: "#/components/responses/Conflict"
         "500":
           $ref: "#/components/responses/InternalError"
+        "504":
+          $ref: "#/components/responses/DependencyTimeout"
 
   /api/v1/stock/cancel:
     post:
@@ -165,10 +175,47 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "408":
+          $ref: "#/components/responses/RequestTimeout"
         "409":
           $ref: "#/components/responses/Conflict"
         "500":
           $ref: "#/components/responses/InternalError"
+        "504":
+          $ref: "#/components/responses/DependencyTimeout"
+
+  /api/v1/stock/clear:
+    post:
+      deprecated: true
+      tags: [Reservations]
+      summary: Backward-compatible alias for cancelling a reservation
+      description: New clients should use /api/v1/stock/cancel.
+      operationId: clearReservation
+      security:
+        - serviceBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "408":
+          $ref: "#/components/responses/RequestTimeout"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "504":
+          $ref: "#/components/responses/DependencyTimeout"
 
 components:
   securitySchemes:
@@ -295,6 +342,12 @@ components:
             $ref: "#/components/schemas/Error"
     InternalError:
       description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RequestTimeout:
+      description: Request was cancelled by the client or upstream caller
       content:
         application/json:
           schema:

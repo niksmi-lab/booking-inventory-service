@@ -17,7 +17,7 @@
 3. Запустите сервис:
 
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
 4. Проверьте состояние:
@@ -118,8 +118,8 @@ SQL хранится в `internal/storage/migrations` и встраиваетс�
 ## Проверки
 
 ```bash
-go test ./...
-go vet ./...
+make quality
+make coverage
 ```
 
 Интеграционный тест требует отдельную тестовую БД и сам очищает таблицы `inventory` и `reservations`:
@@ -127,6 +127,14 @@ go vet ./...
 ```bash
 TEST_DATABASE_URL='postgres://postgres:password@localhost:5433/stock_test?sslmode=disable' \
   go test ./internal/storage -run TestPostgresRepoIntegration -count=1 -v
+```
+
+Полная end-to-end проверка запущенного Compose-стека:
+
+```bash
+docker compose --project-name booking-smoke up --detach --build --wait
+API_KEY='<значение из .env>' ADMIN_API_KEY='<значение из .env>' make smoke-test
+docker compose --project-name booking-smoke down --volumes
 ```
 
 Никогда не направляйте `TEST_DATABASE_URL` на production-базу.

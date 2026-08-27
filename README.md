@@ -164,9 +164,8 @@ See [`api/openapi.yaml`](./api/openapi.yaml) for the complete contract.
 ## Development
 
 ```bash
-make fmt
-make test
-make vet
+make quality
+make coverage
 ```
 
 Run the PostgreSQL integration suite only against a disposable database:
@@ -176,7 +175,15 @@ TEST_DATABASE_URL='postgres://postgres:password@localhost:5433/stock_test?sslmod
   make integration-test
 ```
 
-The CI workflow runs formatting checks, `go vet`, race-enabled tests, PostgreSQL integration tests and a Docker build.
+Run the complete stack and exercise authentication, health, readiness, reservation idempotency and metrics:
+
+```bash
+docker compose --project-name booking-smoke up --detach --build --wait
+API_KEY='<value from .env>' ADMIN_API_KEY='<value from .env>' make smoke-test
+docker compose --project-name booking-smoke down --volumes
+```
+
+The CI workflow runs formatting and static analysis, govulncheck, race-enabled tests with coverage, real PostgreSQL integration tests, and the same container smoke test.
 
 ## Repository guide
 
@@ -185,6 +192,7 @@ The CI workflow runs formatting checks, `go vet`, race-enabled tests, PostgreSQL
 - [`internal/storage`](./internal/storage) — PostgreSQL transactions and migrations.
 - [`internal/handlers`](./internal/handlers) — HTTP contract and middleware.
 - [`cmd/main.go`](./cmd/main.go) — dependency wiring and process lifecycle.
+- [`scripts/smoke-test.sh`](./scripts/smoke-test.sh) — end-to-end verification against a running stack.
 - [`PRODUCTION_CHANGES.md`](./PRODUCTION_CHANGES.md) — detailed hardening rationale.
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — local development workflow.
 

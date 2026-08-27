@@ -10,9 +10,8 @@ Thank you for improving Booking Inventory Service.
 4. Run the quality checks:
 
    ```bash
-   make fmt-check
-   make vet
-   make race-test
+   make quality
+   make coverage
    ```
 
 ## Integration tests
@@ -26,12 +25,22 @@ TEST_DATABASE_URL='postgres://postgres:password@localhost:5433/stock_test?sslmod
 
 Never use a production or shared development database.
 
+## End-to-end smoke test
+
+Start the Compose stack and verify the public HTTP contract:
+
+```bash
+docker compose --project-name booking-smoke up --detach --build --wait
+API_KEY='<value from .env>' ADMIN_API_KEY='<value from .env>' make smoke-test
+docker compose --project-name booking-smoke down --volumes
+```
+
 ## Pull requests
 
 - Keep changes focused and include tests for changed behavior.
 - Preserve domain error wrapping with `errors.Is` compatibility.
 - Keep inventory mutations transactional.
 - Document API contract changes in `api/openapi.yaml` and `README.md`.
-- Run `make fmt-check vet race-test` before opening a pull request.
+- Run `make quality` and the integration or smoke tests affected by the change before opening a pull request.
 
 Use clear commit messages such as `feat: add reservation lookup` or `fix: aggregate expired stock restoration`.
